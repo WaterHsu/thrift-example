@@ -31,7 +31,7 @@ public class AsynCallback implements AsyncMethodCallback<queryUser_call> {
 
 	@Override
 	public void onError(Exception arg0) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("onError: " + arg0.getMessage());
+		latch.countDown();
 	}
 }
