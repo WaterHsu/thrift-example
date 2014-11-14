@@ -16,6 +16,7 @@ public class ThriftServiceImpl implements ThriftService.Iface {
 	  }
 
 	  public User queryUser(int id) throws org.apache.thrift.TException{
+		  System.out.println(id);
 		  User user = new User();
 		  user.userId = 100;
 		  user.username = "FFF";

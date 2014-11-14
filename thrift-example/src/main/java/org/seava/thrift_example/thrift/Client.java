@@ -2,11 +2,19 @@ package org.seava.thrift_example.thrift;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.thrift.TProcessorFactory;
+import org.apache.thrift.async.TAsyncClientManager;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.transport.TFramedTransport;
+import org.apache.thrift.transport.TNonblockingServerSocket;
+import org.apache.thrift.transport.TNonblockingSocket;
+import org.apache.thrift.transport.TNonblockingTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 
@@ -90,7 +98,22 @@ public class Client implements Runnable {
 	}
 	
 	public static void startAsynClient(){
-		
+		try{
+			TAsyncClientManager clientManager = new TAsyncClientManager();
+			TNonblockingTransport transport = new TNonblockingSocket(ip, port, time_out);
+			TProtocolFactory tprotocol = new TCompactProtocol.Factory();
+			ThriftService.AsyncClient asyncClient = new ThriftService.AsyncClient(tprotocol, clientManager, transport);
+			System.out.println("Client start ...");
+			CountDownLatch latch = new CountDownLatch(1);
+			AsynCallback callBack = new AsynCallback(latch);
+			System.out.println("call method queryUser start ...");
+			asyncClient.queryUser(100, callBack);
+			System.out.println("call method queryUser end");
+			boolean wait = latch.await(30, TimeUnit.SECONDS);
+			System.out.println("latch.await =:" + wait);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	public void run(){
@@ -106,7 +129,8 @@ public class Client implements Runnable {
 		new Thread(c1).start();
 		new Thread(c2).start();*/
 		
-		Client.startNonblockingClient();
-		Client.startNonblockingClient();
+//		Client.startNonblockingClient();
+//		Client.startNonblockingClient();
+		Client.startAsynClient();
 	}
 }

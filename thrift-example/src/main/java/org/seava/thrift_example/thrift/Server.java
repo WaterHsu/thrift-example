@@ -133,6 +133,8 @@ public class Server {
 //		Server.startSimpleServer();
 		//开启多线程服务器
 //		Server.startThreadPoolServer();
+//		Server.startTNonblockingServer();
+//		Server.startTHsHaServer();
 		Server.startTNonblockingServer();
 	}
 }
